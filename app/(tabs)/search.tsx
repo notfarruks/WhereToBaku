@@ -6,9 +6,18 @@ import { PlaceCard } from "../../components/PlaceCard";
 import { usePlaces } from "../../hooks/usePlaces";
 import { useFilters } from "../../hooks/useFilters";
 
+const TAG_FILTERS: { id: string; label: string }[] = [
+  { id: "restaurant", label: "Restaurants" },
+  { id: "cafe", label: "Cafés" },
+  { id: "museum", label: "Museums" },
+  { id: "park", label: "Parks" },
+  { id: "historical", label: "Historical" },
+  { id: "nightlife", label: "Nightlife" },
+];
+
 export default function SearchScreen() {
-  const { filters, availableFilters, toggleFilter } = useFilters();
-  const { places } = usePlaces(filters);
+  const { filters, toggleTag } = useFilters();
+  const { places } = usePlaces(filters.tags);
 
   return (
     <ScrollView>
@@ -16,12 +25,12 @@ export default function SearchScreen() {
       <View style={{ paddingHorizontal: 16, paddingTop: 8 }}>
         <Text style={{ fontWeight: "600", marginBottom: 8 }}>Filters</Text>
         <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
-          {availableFilters.map((f) => (
+          {TAG_FILTERS.map((filter) => (
             <FilterChip
-              key={f.id}
-              label={f.label}
-              selected={filters.includes(f.id)}
-              onPress={() => toggleFilter(f.id)}
+              key={filter.id}
+              label={filter.label}
+              selected={filters.tags.includes(filter.id)}
+              onPress={() => toggleTag(filter.id)}
             />
           ))}
         </View>
