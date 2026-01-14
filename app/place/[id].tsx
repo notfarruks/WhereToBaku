@@ -21,6 +21,7 @@ export default function PlaceDetailsScreen() {
 
   return (
     <ScrollView>
+      <Text style={{ padding: 16 }}>Hello</Text>
       <Header title={place.name} />
       <View style={{ padding: 16, gap: 12 }}>
         <RatingStars rating={place.rating} />
