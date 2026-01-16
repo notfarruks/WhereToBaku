@@ -1,6 +1,5 @@
 import type { Place } from './placeTypes';
-import { mockPlaces } from '../../lib/mockData';
-import { supabase } from '../../lib/supabase';
+import { PLACES } from '../../src/data/places';
 
 /**
  * Fetch places from backend (Supabase) or return mock data for MVP
@@ -16,11 +15,11 @@ export async function fetchPlaces(): Promise<Place[]> {
     // if (error) throw error;
     // return data || [];
     
-    return mockPlaces;
+    return PLACES;
   } catch (error) {
     console.error('Error fetching places:', error);
     // Fallback to mock data on error
-    return mockPlaces;
+    return PLACES;
   }
 }
 
@@ -38,7 +37,7 @@ export async function fetchPlaceById(id: string): Promise<Place | null> {
     // if (error) throw error;
     // return data;
     
-    return mockPlaces.find(p => p.id === id) || null;
+    return PLACES.find(p => p.id === id) || null;
   } catch (error) {
     console.error('Error fetching place:', error);
     return null;

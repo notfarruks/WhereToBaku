@@ -56,8 +56,8 @@ export function calculateRelevanceScore(
   const distance = calculateDistance(
     userLat,
     userLon,
-    place.latitude,
-    place.longitude
+    place.location.lat,
+    place.location.lng
   );
   if (distance < 2) score += 0.5;
   else if (distance < 5) score += 0.2;
@@ -95,8 +95,8 @@ export function filterByDistance(
     const distance = calculateDistance(
       userLat,
       userLon,
-      place.latitude,
-      place.longitude
+      place.location.lat,
+      place.location.lng
     );
     return distance <= maxDistanceKm;
   });

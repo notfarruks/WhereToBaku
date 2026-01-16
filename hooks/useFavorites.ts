@@ -1,6 +1,4 @@
 import { useState, useEffect, useCallback } from 'react';
-import type { Place } from '../features/places/placeTypes';
-
 // For MVP, use AsyncStorage to persist favorites
 // TODO: Replace with Supabase when backend is ready
 import AsyncStorage from '@react-native-async-storage/async-storage';

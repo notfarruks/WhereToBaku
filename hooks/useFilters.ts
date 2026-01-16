@@ -1,9 +1,17 @@
 import { useState, useCallback } from 'react';
+import type { PlaceCategory, PriceRange } from '../features/places/placeTypes';
 import type { ActiveFilters } from '../features/filters/filterTypes';
 import { createDefaultFilters } from '../features/filters/filterUtils';
 
 export function useFilters() {
   const [filters, setFilters] = useState<ActiveFilters>(createDefaultFilters());
+
+  const setQuery = useCallback((query: string) => {
+    setFilters(prev => ({
+      ...prev,
+      query,
+    }));
+  }, []);
 
   const toggleTag = useCallback((tag: string) => {
     setFilters(prev => ({
@@ -14,6 +22,15 @@ export function useFilters() {
     }));
   }, []);
 
+  const toggleCategory = useCallback((category: PlaceCategory) => {
+    setFilters(prev => ({
+      ...prev,
+      categories: prev.categories.includes(category)
+        ? prev.categories.filter(c => c !== category)
+        : [...prev.categories, category],
+    }));
+  }, []);
+
   const setMinRating = useCallback((rating: number) => {
     setFilters(prev => ({
       ...prev,
@@ -21,12 +38,12 @@ export function useFilters() {
     }));
   }, []);
 
-  const togglePriceRange = useCallback((priceRange: string) => {
+  const togglePriceRange = useCallback((price: PriceRange) => {
     setFilters(prev => ({
       ...prev,
-      priceRanges: prev.priceRanges.includes(priceRange)
-        ? prev.priceRanges.filter(p => p !== priceRange)
-        : [...prev.priceRanges, priceRange],
+      priceRange: prev.priceRange.includes(price)
+        ? prev.priceRange.filter(p => p !== price)
+        : [...prev.priceRange, price],
     }));
   }, []);
 
@@ -43,7 +60,9 @@ export function useFilters() {
 
   return {
     filters,
+    setQuery,
     toggleTag,
+    toggleCategory,
     setMinRating,
     togglePriceRange,
     setMaxDistance,
