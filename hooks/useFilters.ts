@@ -13,6 +13,13 @@ export function useFilters() {
     }));
   }, []);
 
+  const toggleOpenNow = useCallback(() => {
+    setFilters(prev => ({
+      ...prev,
+      openNow: !prev.openNow,
+    }));
+  }, []);
+
   const toggleTag = useCallback((tag: string) => {
     setFilters(prev => ({
       ...prev,
@@ -66,6 +73,7 @@ export function useFilters() {
     setMinRating,
     togglePriceRange,
     setMaxDistance,
+    toggleOpenNow,
     resetFilters,
   };
 }

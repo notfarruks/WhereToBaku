@@ -16,4 +16,5 @@ export interface ActiveFilters {
   minRating: number;
   priceRange: PriceRange[];
   maxDistance: number | null;
+  openNow: boolean;
 }

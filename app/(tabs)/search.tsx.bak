@@ -9,9 +9,6 @@ import { useLocation } from "../../hooks/useLocation";
 import type { PlaceCategory, PriceRange } from "../../features/places/placeTypes";
 
 const TAG_FILTERS: { id: string; label: string }[] = [
-  { id: "romantic", label: "Romantic" },
-  { id: "family-friendly", label: "Family friendly" },
-  { id: "work-friendly", label: "Work friendly" },
   { id: "restaurant", label: "Restaurants" },
   { id: "cafe", label: "Cafes" },
   { id: "museum", label: "Museums" },
@@ -59,7 +56,6 @@ export default function SearchScreen() {
     setMaxDistance,
     setMinRating,
     toggleOpenNow,
-    resetFilters,
   } = useFilters();
   const location = useLocation();
 
@@ -68,15 +64,6 @@ export default function SearchScreen() {
     : undefined;
 
   const { places } = usePlaces(filters, userLocation);
-
-  const hasActiveFilters =
-    filters.query.trim().length > 0 ||
-    filters.tags.length > 0 ||
-    filters.categories.length > 0 ||
-    filters.priceRange.length > 0 ||
-    filters.maxDistance != null ||
-    filters.minRating > 0 ||
-    filters.openNow;
 
   return (
     <ScrollView>
@@ -98,33 +85,10 @@ export default function SearchScreen() {
           />
         </View>
 
-        {hasActiveFilters && (
-          <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
-            {filters.query ? <FilterChip label={`“${filters.query}”`} /> : null}
-            {filters.tags.map(tag => (
-              <FilterChip key={`tag-${tag}`} label={tag} selected />
-            ))}
-            {filters.categories.map(cat => (
-              <FilterChip key={`cat-${cat}`} label={cat} selected />
-            ))}
-            {filters.priceRange.map(price => (
-              <FilterChip key={`price-${price}`} label={price === "budget" ? "$" : price === "moderate" ? "$$" : "$$$"} selected />
-            ))}
-            {filters.maxDistance != null ? (
-              <FilterChip label={`<${filters.maxDistance} km`} selected />
-            ) : null}
-            {filters.minRating > 0 ? (
-              <FilterChip label={`${filters.minRating}+`} selected />
-            ) : null}
-            {filters.openNow ? <FilterChip label="Open now" selected /> : null}
-            <FilterChip label="Clear" onPress={resetFilters} />
-          </View>
-        )}
-
         <View style={{ gap: 6 }}>
           <Text style={{ fontWeight: "600" }}>Categories</Text>
           <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
-            {CATEGORY_FILTERS.map(filter => (
+            {CATEGORY_FILTERS.map((filter) => (
               <FilterChip
                 key={filter.id}
                 label={filter.label}
@@ -138,7 +102,7 @@ export default function SearchScreen() {
         <View style={{ gap: 6 }}>
           <Text style={{ fontWeight: "600" }}>Tags</Text>
           <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
-            {TAG_FILTERS.map(filter => (
+            {TAG_FILTERS.map((filter) => (
               <FilterChip
                 key={filter.id}
                 label={filter.label}
@@ -152,7 +116,7 @@ export default function SearchScreen() {
         <View style={{ gap: 6 }}>
           <Text style={{ fontWeight: "600" }}>Price</Text>
           <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
-            {PRICE_FILTERS.map(filter => (
+            {PRICE_FILTERS.map((filter) => (
               <FilterChip
                 key={filter.id}
                 label={filter.label}
@@ -166,7 +130,7 @@ export default function SearchScreen() {
         <View style={{ gap: 6 }}>
           <Text style={{ fontWeight: "600" }}>Distance</Text>
           <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
-            {DISTANCE_OPTIONS.map(option => (
+            {DISTANCE_OPTIONS.map((option) => (
               <FilterChip
                 key={String(option.id)}
                 label={option.label}
@@ -186,31 +150,13 @@ export default function SearchScreen() {
             </Text>
           )}
         </View>
-
-        <View style={{ gap: 6 }}>
-          <Text style={{ fontWeight: "600" }}>Rating</Text>
-          <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
-            {RATING_OPTIONS.map(option => (
-              <FilterChip
-                key={String(option.id)}
-                label={option.label}
-                selected={filters.minRating === option.id}
-                onPress={() => setMinRating(option.id)}
-              />
-            ))}
-          </View>
-        </View>
-
-        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-          <Text style={{ fontWeight: "600" }}>Open now</Text>
-          <Switch value={filters.openNow} onValueChange={toggleOpenNow} />
-        </View>
       </View>
       <View style={{ padding: 16, gap: 12 }}>
-        {places.map(place => (
+        {places.map((place) => (
           <PlaceCard key={place.id} place={place} />
         ))}
       </View>
     </ScrollView>
   );
 }
+

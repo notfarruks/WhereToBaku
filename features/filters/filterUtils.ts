@@ -9,6 +9,7 @@ export const DEFAULT_FILTERS: ActiveFilters = {
   minRating: 0,
   priceRange: [],
   maxDistance: null,
+  openNow: false,
 };
 
 export function createDefaultFilters(): ActiveFilters {
@@ -59,6 +60,10 @@ export function applyFilters(
     filtered = filtered.filter(
       place => place.priceRange && filters.priceRange.includes(place.priceRange)
     );
+  }
+
+  if (filters.openNow) {
+    filtered = filtered.filter(place => place.openNow === true);
   }
 
   if (filters.maxDistance != null && userLocation) {
