@@ -3,8 +3,14 @@ import type { PlaceCategory, PriceRange } from '../features/places/placeTypes';
 import type { ActiveFilters } from '../features/filters/filterTypes';
 import { createDefaultFilters } from '../features/filters/filterUtils';
 
-export function useFilters() {
-  const [filters, setFilters] = useState<ActiveFilters>(createDefaultFilters());
+export function useFilters(initialFilters?: ActiveFilters) {
+  const [filters, setFilters] = useState<ActiveFilters>(
+    () => initialFilters ?? createDefaultFilters()
+  );
+
+  const setAllFilters = useCallback((next: ActiveFilters) => {
+    setFilters(next);
+  }, []);
 
   const setQuery = useCallback((query: string) => {
     setFilters(prev => ({
@@ -67,6 +73,7 @@ export function useFilters() {
 
   return {
     filters,
+    setAllFilters,
     setQuery,
     toggleTag,
     toggleCategory,

@@ -12,6 +12,9 @@ export type PlaceCategory =
   | 'shopping';
 
 export interface Place {
+  /**
+   * Stable schema for v1. Freeze changes here before Supabase migration.
+   */
   id: PlaceId;
   name: string;
   description: string;
@@ -21,12 +24,16 @@ export interface Place {
   tags: string[];
   category: PlaceCategory;
   images: string[];
+  /**
+   * Optional fields below
+   */
   priceRange?: PriceRange;
   hours?: string;
   openNow?: boolean;
   phone?: string;
   instagram?: string;
   website?: string;
+  menuUrl?: string;
 }
 
 export interface PlaceFilters {

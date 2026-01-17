@@ -80,6 +80,7 @@ export const PLACES: Place[] = [
     category: 'restaurant',
     images: ['https://images.where-to-baku.example/firuze-restaurant.jpg'],
     priceRange: 'expensive',
+    menuUrl: 'https://example.com/firuze-restaurant/menu',
     hours: '12:00 - 23:00',
     openNow: false,
     phone: '+994 12 498 8182',

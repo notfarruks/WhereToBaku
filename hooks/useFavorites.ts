@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 // For MVP, use AsyncStorage to persist favorites
 // TODO: Replace with Supabase when backend is ready
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { logEvent } from '../lib/analytics';
 
 const FAVORITES_KEY = '@WhereToBaku:favorites';
 
@@ -41,10 +42,20 @@ export function useFavorites() {
       const newFavorites = favorites.includes(placeId)
         ? favorites.filter(id => id !== placeId)
         : [...favorites, placeId];
+      const action = newFavorites.includes(placeId) ? 'save' : 'unsave';
       await saveFavorites(newFavorites);
+      logEvent('favorite_toggled', {
+        placeId,
+        action,
+        totalFavorites: newFavorites.length,
+      });
     },
     [favorites, saveFavorites]
   );
+
+  const clearFavorites = useCallback(async () => {
+    await saveFavorites([]);
+  }, [saveFavorites]);
 
   const isFavorite = useCallback(
     (placeId: string) => favorites.includes(placeId),
@@ -56,5 +67,6 @@ export function useFavorites() {
     loading,
     toggleFavorite,
     isFavorite,
+    clearFavorites,
   };
 }

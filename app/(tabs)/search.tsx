@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import { ScrollView, Text, TextInput, View, Switch } from "react-native";
 import { Header } from "../../components/Header";
 import { FilterChip } from "../../components/FilterChip";
@@ -7,6 +7,9 @@ import { usePlaces } from "../../hooks/usePlaces";
 import { useFilters } from "../../hooks/useFilters";
 import { useLocation } from "../../hooks/useLocation";
 import type { PlaceCategory, PriceRange } from "../../features/places/placeTypes";
+import { useLocalSearchParams } from "expo-router";
+import { createDefaultFilters } from "../../features/filters/filterUtils";
+import { logEvent } from "../../lib/analytics";
 
 const TAG_FILTERS: { id: string; label: string }[] = [
   { id: "romantic", label: "Romantic" },
@@ -50,8 +53,23 @@ const RATING_OPTIONS: { id: number; label: string }[] = [
 ];
 
 export default function SearchScreen() {
+  const params = useLocalSearchParams<{ tags?: string; prices?: string; openNow?: string }>();
+  const sessionStartRef = useRef<number>(Date.now());
+  const hasLoggedFilterUseRef = useRef(false);
+
+  const prefilledFilters = useMemo(() => {
+    const base = createDefaultFilters();
+    base.tags = params.tags ? params.tags.split(",").filter(Boolean) : [];
+    base.priceRange = params.prices
+      ? (params.prices.split(",").filter(Boolean) as PriceRange[])
+      : [];
+    base.openNow = params.openNow === "true" ? true : base.openNow;
+    return base;
+  }, [params.openNow, params.prices, params.tags]);
+
   const {
     filters,
+    setAllFilters,
     setQuery,
     toggleTag,
     toggleCategory,
@@ -60,7 +78,13 @@ export default function SearchScreen() {
     setMinRating,
     toggleOpenNow,
     resetFilters,
-  } = useFilters();
+  } = useFilters(prefilledFilters);
+
+  useEffect(() => {
+    setAllFilters(prefilledFilters);
+    sessionStartRef.current = Date.now();
+    hasLoggedFilterUseRef.current = false;
+  }, [prefilledFilters, setAllFilters]);
   const location = useLocation();
 
   const userLocation = !location.loading
@@ -77,6 +101,13 @@ export default function SearchScreen() {
     filters.maxDistance != null ||
     filters.minRating > 0 ||
     filters.openNow;
+
+  useEffect(() => {
+    if (hasActiveFilters && !hasLoggedFilterUseRef.current) {
+      hasLoggedFilterUseRef.current = true;
+      logEvent("filters_used", { source: "search" });
+    }
+  }, [hasActiveFilters]);
 
   return (
     <ScrollView>
@@ -208,7 +239,19 @@ export default function SearchScreen() {
       </View>
       <View style={{ padding: 16, gap: 12 }}>
         {places.map(place => (
-          <PlaceCard key={place.id} place={place} />
+          <PlaceCard
+            key={place.id}
+            place={place}
+            onPress={() => {
+              const elapsedMs = Date.now() - sessionStartRef.current;
+              logEvent("place_opened", {
+                source: "search",
+                filterUsed: hasActiveFilters,
+                elapsedMs,
+              });
+              // Navigate using PlaceCard default handler
+            }}
+          />
         ))}
       </View>
     </ScrollView>

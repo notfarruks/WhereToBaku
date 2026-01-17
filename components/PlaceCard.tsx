@@ -8,16 +8,30 @@ import { useFavorites } from "../hooks/useFavorites";
 
 type Props = {
   place: Place;
+  distanceKm?: number;
+  onPress?: () => void | boolean;
 };
 
-export const PlaceCard: React.FC<Props> = ({ place }) => {
+export const PlaceCard: React.FC<Props> = ({ place, distanceKm, onPress }) => {
   const router = useRouter();
   const { isFavorite, toggleFavorite } = useFavorites();
   const favorite = isFavorite(place.id);
+  const status =
+    place.openNow == null
+      ? null
+      : {
+          label: place.openNow ? "Open" : "Closed",
+          color: place.openNow ? "#065F46" : "#B91C1C",
+          bg: place.openNow ? "#DCFCE7" : "#FEE2E2",
+        };
 
   return (
     <Pressable
-      onPress={() => router.push(`/place/${place.id}`)}
+      onPress={() => {
+        const result = onPress ? onPress() : undefined;
+        if (result === false) return;
+        router.push(`/place/${place.id}`);
+      }}
       style={{
         borderRadius: 12,
         backgroundColor: "#FFFFFF",
@@ -50,8 +64,27 @@ export const PlaceCard: React.FC<Props> = ({ place }) => {
           </Text>
         </Pressable>
       </View>
-      <RatingStars rating={place.rating} />
-      <Text style={{ opacity: 0.7 }}>{place.address}</Text>
+      <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+        <RatingStars rating={place.rating} />
+        {status && (
+          <Text
+            style={{
+              fontSize: 12,
+              color: status.color,
+              backgroundColor: status.bg,
+              paddingHorizontal: 8,
+              paddingVertical: 2,
+              borderRadius: 999,
+            }}
+          >
+            {status.label}
+          </Text>
+        )}
+      </View>
+      <Text style={{ opacity: 0.7 }}>
+        {place.address}
+        {typeof distanceKm === "number" ? ` · ${distanceKm.toFixed(1)} km away` : ""}
+      </Text>
       <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 6 }}>
         {place.tags.map((tag) => (
           <TagBadge key={tag} label={tag} />

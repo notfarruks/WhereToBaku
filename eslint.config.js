@@ -2,7 +2,7 @@ import tsParser from '@react-native/eslint-config/node_modules/@typescript-eslin
 
 export default [
   {
-    ignores: ['node_modules', 'dist', 'build'],
+    ignores: ['node_modules', 'dist', 'build', '.expo'],
   },
   {
     files: ['**/*.{js,jsx}'],
